@@ -1,0 +1,27 @@
+service: serverless-carts-service
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: 'us-east-1'
+  profile: 'sandx'
+  environment: 
+    DB_HOST: localhost
+    DB_PORT: 5432
+    DATABASE: postgres
+    DB_USERNAME: postgres
+    DB_PASSWORD: postgrespw
+
+functions:
+  main:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
