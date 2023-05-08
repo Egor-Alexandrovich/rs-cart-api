@@ -22,8 +22,4 @@ export class ProductService {
       }
     });
   }
-
-  listAllProduct2(): Promise<Products[]> {
-    return this.productRepository.find();
-  }
 }

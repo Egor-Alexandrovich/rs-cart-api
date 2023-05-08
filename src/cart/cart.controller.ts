@@ -19,46 +19,19 @@ export class CartController {
   // @UseGuards(BasicAuthGuard)
   @Get()
   async findUserCart(@Req() req: AppRequest): Promise<CartItem[]> {
-    const cart = this.cartService.findOrCreateByUserId('');
-
-    return []
-  }
-
-  @Get('all')
-  async getAllCarts(@Req() req: AppRequest) {
-    const cart = await this.cartService.getAllCarts();
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'OK',
-      data: { cart },
-    }
-  }
-  @Get('all2')
-  async findByUserId(@Req() req: AppRequest) {
-    const cart = await this.cartService.findByUserId('c564ba91-d2da-429d-a32f-819693997d77');
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'OK',
-      data: { cart },
-    }
+    const userId = '088bef61-8b79-4c8c-be38-d045e59bb043'
+    const cart = await this.cartService.findOrCreateByUserId(userId);
+    return cart.items || []
   }
 
   // @UseGuards(JwtAuthGuard)
   // @UseGuards(BasicAuthGuard)
   @Put()
-  updateUserCart(@Req() req: AppRequest, @Body() body) { // TODO: validate body payload...
-    const cart = this.cartService.updateByUserId(getUserIdFromRequest(req), body)
+  async updateUserCart(@Req() req: AppRequest, @Body() body) {
+    const userId = '088bef61-8b79-4c8c-be38-d045e59bb043'
+    const cartItem = await this.cartService.updateByUserId(userId, body)
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'OK',
-      data: {
-        cart,
-        total: calculateCartTotal(cart),
-      }
-    }
+    return [cartItem]
   }
 
   // @UseGuards(JwtAuthGuard)

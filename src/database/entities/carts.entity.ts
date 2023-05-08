@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { CartItems } from './cart-items.entity';
 import { Orders } from './orders.entity';
 import { Users } from './users.entity'
@@ -13,22 +13,18 @@ export class Carts {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => Users)
-  @JoinColumn()
-  userId: Users
+  @Column({type: 'uuid', nullable: false })
+  userId: string;
 
   @Column({ type: 'date', nullable: false })
-  created_at: string;
+  created_at: Date;
 
   @Column({ type: 'date', nullable: false })
-  updated_at: string;
+  updated_at: Date;
 
 	@Column()
   status: EStatus;
 
-  @OneToMany(() => CartItems, (cartItems) =>cartItems.cartId)
+  @OneToMany(() => CartItems, (cartItems) =>cartItems.cart, { cascade: true })
   items: CartItems[]
-
-  @OneToMany(() => Orders, (orders) =>orders.cartId)
-  orders: Orders[]
 }

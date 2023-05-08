@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { Carts } from './carts.entity';
 import { Products } from './products.entity';
 
@@ -7,12 +7,12 @@ export class CartItems {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-	@ManyToOne(() => Carts, (carts) => carts.id)
-  cartId: Carts;
-
   @OneToOne(() => Products, { eager: true })
   @JoinColumn()
   product: Products
+
+	@ManyToOne(() => Carts, (carts) => carts.items, { onDelete: 'CASCADE' })
+  cart: Carts;
 
 	@Column({ type: 'integer' })
   count: number;

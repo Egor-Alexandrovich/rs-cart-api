@@ -12,5 +12,4 @@ export class ProductController {
   async getAllProduct() {
     return await this.productService.listAllProduct();
   }
-
 }
