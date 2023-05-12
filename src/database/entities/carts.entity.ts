@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { CartItems } from './cart-items.entity';
-import { Orders } from './orders.entity';
 import { Users } from './users.entity'
 
 export enum EStatus {
@@ -13,8 +12,12 @@ export class Carts {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({type: 'uuid', nullable: false })
-  userId: string;
+  @OneToOne(() => Users)
+	@Column({
+		type: 'uuid',
+		nullable: false
+	})
+	userId: string;
 
   @Column({ type: 'date', nullable: false })
   created_at: Date;
@@ -25,6 +28,11 @@ export class Carts {
 	@Column()
   status: EStatus;
 
-  @OneToMany(() => CartItems, (cartItems) =>cartItems.cart, { cascade: true })
-  items: CartItems[]
+  @OneToOne(() => Users)
+	@JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+	user: Users
+
+  @OneToMany(() => CartItems, (cartItem) => cartItem.cart, { onDelete: 'CASCADE' })
+	@JoinColumn({ name: 'id', referencedColumnName: 'cart_id' })
+	items: CartItems[]
 }

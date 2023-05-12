@@ -1,7 +1,10 @@
 service: serverless-carts-service
 
+useDotenv: true
+
 plugins:
   - serverless-offline
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
@@ -9,11 +12,11 @@ provider:
   region: 'us-east-1'
   profile: 'sandx'
   environment: 
-    DB_HOST: localhost
-    DB_PORT: 5432
-    DATABASE: postgres
-    DB_USERNAME: postgres
-    DB_PASSWORD: postgrespw
+    DB_HOST: ${env:DB_HOST}
+    DB_PORT: ${env:DB_PORT}
+    DATABASE: ${env:DATABASE}
+    DB_USERNAME: ${env:DB_USERNAME}
+    DB_PASSWORD: ${env:DB_PASSWORD}
 
 functions:
   main:
@@ -22,6 +25,3 @@ functions:
       - http:
           method: ANY
           path: /
-      - http:
-          method: ANY
-          path: '{proxy+}'

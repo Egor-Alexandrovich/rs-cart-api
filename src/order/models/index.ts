@@ -18,3 +18,12 @@ export type Order = {
   status: string;
   total: number;
 }
+export interface OrderPayload  {
+  address: {
+    address: string,
+    comment: string,
+    firstName: string,
+    lastName: string
+  },
+  items: CartItem[]
+}

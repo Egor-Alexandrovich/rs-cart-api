@@ -3,9 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Carts, EStatus, CartItems, Products } from '../../database/entities/';
 
-import { v4 } from 'uuid';
-
-import { Cart, CartItem } from '../models';
+import { CartItem } from '../models';
 
 @Injectable()
 export class CartService {
@@ -17,18 +15,12 @@ export class CartService {
     @InjectRepository(Products)
     private productRepository: Repository<Products>,
   ) { }
-  private userCarts: Record<string, Cart> = {};
-
-  getAllCarts() {
-    return this.cartsRepository.find({
-      relations: ['items']
-    });
-  }
 
   findByUserId(userId: string): Promise<Carts> {
     return this.cartsRepository.findOne({
       where: {
         userId: userId,
+        status: EStatus.OPEN
       },
       relations: ['items']
     });
@@ -60,13 +52,12 @@ export class CartService {
     let cartItem = undefined;
     try {
       cartItem = await this.cartsItemsRepository.findOne({
-        where: { cart: id, product: item.product.id},
+        where: { cart_id: id, product: item.product.id},
       });
     } catch (error) {
       cartItem = undefined
     }
 
-    console.log('cartItem', cartItem)
     if (cartItem) {
       if (item.count > 0) {
         cartItem.count = item.count;
@@ -81,7 +72,7 @@ export class CartService {
         }
       });
       cartItem = new CartItems();
-      cartItem.cart = id as unknown as Carts;
+      cartItem.cart_id = id as unknown as Carts;
       cartItem.product = product;
       cartItem.count = item.count;
 
@@ -90,14 +81,29 @@ export class CartService {
     return cartItem;
   }
 
-  async removeByUserId(userId): Promise<void> {
+  async removeByUserId(userId: string): Promise<void> {
     const cart = await this.cartsRepository.findOne({
       where: {
         userId: userId,
       },
       relations: ['items']
     });
+    await this.cartsItemsRepository.delete({ cart });
     await this.cartsRepository.remove(cart);
+    console.log('Cart was deleted ', cart)
+  }
+
+  async changeStatusByCartId(cartId: string, status: EStatus): Promise<void> {
+    const cart = await this.cartsRepository.findOne({
+      where: {
+        id: cartId,
+      },
+      relations: ['items']
+    });
+    console.log('Cart', cart);
+    cart.status = status;
+    await this.cartsRepository.save(cart);
+    console.log('Cart status was updated ', cart)
   }
 
 }

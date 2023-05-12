@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Carts, EStatus } from './carts.entity';
 import { Users } from './users.entity';
 
@@ -11,8 +11,9 @@ export class Orders {
   @JoinColumn()
   user: Users
 
-	@ManyToOne(() => Carts, (carts) => carts.id)
-  cartId: Carts;
+  @OneToOne(() => Carts)
+  @JoinColumn()
+  cart: Carts
 
   @Column({ type: 'json' })
   payment: string;
