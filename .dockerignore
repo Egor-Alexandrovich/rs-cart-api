@@ -1,0 +1,5 @@
+.git
+node_modules/
+.serverless
+dist/
+db_script/
